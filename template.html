@@ -1,0 +1,98 @@
+<!doctype html>
+<html>
+<head>
+	<title>{toBeReplaced}</title>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+<script src="https://d3js.org/d3.v4.min.js"></script>
+<script type="text/javascript" src="gauge.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body onload="initialize()">
+	<main class="containter-fluid">
+	<div class="row">
+		<div class="col-md-3 mx-auto">
+				<div class="card">
+					<div class="card-header">
+		    			{toBeReplaced}
+		  				</div>
+		  		<div class="card-body">
+		    		<h5 class="card-title">{somethingDifferent}</h5>
+		    		<p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
+		    		<a href="#" class="btn btn-primary">Go somewhere</a>
+		  		</div>
+				</div>
+		</div>
+				<div class="col-md-12 mx-auto">
+				<div class="card">
+					<div class="card-header">
+		    			Data
+		  				</div>
+		  		<div class="card-body">
+		<span id="memoryGaugeContainer"></span>
+		<span id="cpuGaugeContainer"></span>
+		<span id="networkGaugeContainer"></span>
+		<span id="testGaugeContainer"></span>
+		  		</div>
+				</div>
+		</div>
+	</div>
+	</main>
+	<script>
+						
+				
+			var gauges = [];
+			
+			function createGauge(name, label, min, max)
+			{
+				var config = 
+				{
+					size: 120,
+					label: label,
+					min: undefined != min ? min : 0,
+					max: undefined != max ? max : 100,
+					minorTicks: 5
+				}
+				
+				var range = config.max - config.min;
+				config.yellowZones = [{ from: config.min + range*0.75, to: config.min + range*0.9 }];
+				config.redZones = [{ from: config.min + range*0.9, to: config.max }];
+				
+				gauges[name] = new Gauge(name + "GaugeContainer", config);
+				gauges[name].render();
+			}
+			
+			function createGauges()
+			{
+				createGauge("memory", "Memory");
+				createGauge("cpu", "CPU");
+				createGauge("network", "Network");
+				//createGauge("test", "Test", -50, 50 );
+			}
+			
+			function updateGauges()
+			{
+				for (var key in gauges)
+				{
+					var value = getRandomValue(gauges[key])
+					gauges[key].redraw(value);
+				}
+			}
+			
+			function getRandomValue(gauge)
+			{
+				var overflow = 0; //10;
+				return gauge.config.min - overflow + (gauge.config.max - gauge.config.min + overflow*2) *  Math.random();
+			}
+			
+			function initialize()
+			{
+				createGauges();
+				setInterval(updateGauges, 5000);
+			}
+			
+		</script>
+</body>
+</html>
