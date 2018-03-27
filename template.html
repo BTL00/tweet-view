@@ -8,20 +8,75 @@
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
 <script src="https://d3js.org/d3.v4.min.js"></script>
 <script type="text/javascript" src="gauge.js"></script>
-<meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta http-equiv="content-type" content="text/html;charset=utf-8">
+	<style>
+
+	#power-gauge g.arc {
+		fill: steelblue;
+	}
+
+	#power-gauge g.pointer {
+		fill: #e85116;
+		stroke: #b64011;
+	}
+	
+	#power-gauge g.label text {
+		text-anchor: middle;
+		font-size: 14px;
+		font-weight: bold;
+		fill: #666;
+	}
+	</style>
+
 </head>
-<body onload="initialize()">
-	<main class="containter-fluid">
+<body>
+	
+	<nav class="navbar navbar-light bg-light">
+		<a class="navbar-brand" href="#">
+		<img src="/assets/brand/bootstrap-solid.svg" width="30" height="30" class="d-inline-block align-top" alt="">
+    Tweet view
+  		</a>
+	</nav>
+	
+	<div class="containter">
+
 	<div class="row">
-		<div class="col-md-3 mx-auto">
+		<div class="col-md-4 mx-auto">
 				<div class="card">
 					<div class="card-header">
-		    			{toBeReplaced}
+						Requests handled
 		  				</div>
 		  		<div class="card-body">
-		    		<h5 class="card-title">{somethingDifferent}</h5>
-		    		<p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-		    		<a href="#" class="btn btn-primary">Go somewhere</a>
+		    		<h5 class="card-title">{toBeReplaced}</h5>
+		    		<p class="card-text">This is amount of loads of our page since restart on {dateStart}</p>
+		  		</div>
+				</div>
+		</div>
+				<div class="col-md-4 mx-auto ">
+				<div class="card bg-light">
+					<div class="card-header">
+		    			GitHub Contributors
+		  				</div>
+		  		<div class="card-body">
+		    		<h5 class="card-title">{totalCommits}</h5>
+		    		<p class="card-text">Total commits</p>
+		    		<h5 class="card-title">{totalContributors}</h5>
+		    		<p class="card-text">Total contributors</p>
+
+		    		<a href="https://github.com/BTL00/tweet-view" class="btn btn-primary">Repo</a>
+		  		</div>
+				</div>
+		</div>
+		<div class="col-md-4 mx-auto">
+				<div class="card">
+					<div class="card-header bg-info">
+		    			Donate
+		  				</div>
+		  		<div class="card-body">
+		    		<img src="ptw.png" class="img-fluid" />
+		    		<p class="card-text">Support me as a natural lead-in to updates and new content.</p>
+		    		<a href="https://www.patreon.com/bombapiotr" class="btn btn-primary">Do it now!</a>
 		  		</div>
 				</div>
 		</div>
@@ -31,68 +86,215 @@
 		    			Data
 		  				</div>
 		  		<div class="card-body">
-		<span id="memoryGaugeContainer"></span>
-		<span id="cpuGaugeContainer"></span>
-		<span id="networkGaugeContainer"></span>
-		<span id="testGaugeContainer"></span>
+					<div id="power-gauge"></div>
 		  		</div>
 				</div>
 		</div>
 	</div>
-	</main>
-	<script>
-						
-				
-			var gauges = [];
-			
-			function createGauge(name, label, min, max)
-			{
-				var config = 
-				{
-					size: 120,
-					label: label,
-					min: undefined != min ? min : 0,
-					max: undefined != max ? max : 100,
-					minorTicks: 5
-				}
-				
-				var range = config.max - config.min;
-				config.yellowZones = [{ from: config.min + range*0.75, to: config.min + range*0.9 }];
-				config.redZones = [{ from: config.min + range*0.9, to: config.max }];
-				
-				gauges[name] = new Gauge(name + "GaugeContainer", config);
-				gauges[name].render();
-			}
-			
-			function createGauges()
-			{
-				createGauge("memory", "Memory");
-				createGauge("cpu", "CPU");
-				createGauge("network", "Network");
-				//createGauge("test", "Test", -50, 50 );
-			}
-			
-			function updateGauges()
-			{
-				for (var key in gauges)
-				{
-					var value = getRandomValue(gauges[key])
-					gauges[key].redraw(value);
-				}
-			}
-			
-			function getRandomValue(gauge)
-			{
-				var overflow = 0; //10;
-				return gauge.config.min - overflow + (gauge.config.max - gauge.config.min + overflow*2) *  Math.random();
-			}
-			
-			function initialize()
-			{
-				createGauges();
-				setInterval(updateGauges, 5000);
-			}
-			
-		</script>
+	</div>
+
 </body>
+
+<script>
+var gauge = function(container, configuration) {
+	var that = {};
+	var config = {
+		size						: 710,
+		clipWidth					: 200,
+		clipHeight					: 110,
+		ringInset					: 20,
+		ringWidth					: 20,
+		
+		pointerWidth				: 10,
+		pointerTailLength			: 5,
+		pointerHeadLengthPercent	: 0.9,
+		
+		minValue					: 0,
+		maxValue					: 10,
+		
+		minAngle					: -90,
+		maxAngle					: 90,
+		
+		transitionMs				: 750,
+		
+		majorTicks					: 5,
+		labelFormat					: d3.format('d'),
+		labelInset					: 10,
+		
+		arcColorFn					: d3.interpolateHsl(d3.rgb('#e8e2ca'), d3.rgb('#3e6c0a'))
+	};
+	var range = undefined;
+	var r = undefined;
+	var pointerHeadLength = undefined;
+	var value = 0;
+	
+	var svg = undefined;
+	var arc = undefined;
+	var scale = undefined;
+	var ticks = undefined;
+	var tickData = undefined;
+	var pointer = undefined;
+
+	var donut = d3.pie();
+	
+	function deg2rad(deg) {
+		return deg * Math.PI / 180;
+	}
+	
+	function newAngle(d) {
+		var ratio = scale(d);
+		var newAngle = config.minAngle + (ratio * range);
+		return newAngle;
+	}
+	
+	function configure(configuration) {
+		var prop = undefined;
+		for ( prop in configuration ) {
+			config[prop] = configuration[prop];
+		}
+		
+		range = config.maxAngle - config.minAngle;
+		r = config.size / 2;
+		pointerHeadLength = Math.round(r * config.pointerHeadLengthPercent);
+
+		// a linear scale that maps domain values to a percent from 0..1
+		scale = d3.scaleLinear()
+			.range([0,1])
+			.domain([config.minValue, config.maxValue]);
+			
+		ticks = scale.ticks(config.majorTicks);
+		tickData = d3.range(config.majorTicks).map(function() {return 1/config.majorTicks;});
+		
+		arc = d3.arc()
+			.innerRadius(r - config.ringWidth - config.ringInset)
+			.outerRadius(r - config.ringInset)
+			.startAngle(function(d, i) {
+				var ratio = d * i;
+				return deg2rad(config.minAngle + (ratio * range));
+			})
+			.endAngle(function(d, i) {
+				var ratio = d * (i+1);
+				return deg2rad(config.minAngle + (ratio * range));
+			});
+	}
+	that.configure = configure;
+	
+	function centerTranslation() {
+		return 'translate('+r +','+ r +')';
+	}
+	
+	function isRendered() {
+		return (svg !== undefined);
+	}
+	that.isRendered = isRendered;
+	
+	function render(newValue) {
+		svg = d3.select(container)
+			.append('svg:svg')
+				.attr('class', 'gauge')
+				.attr('width', config.clipWidth)
+				.attr('height', config.clipHeight);
+		
+		var centerTx = centerTranslation();
+		
+		var arcs = svg.append('g')
+				.attr('class', 'arc')
+				.attr('transform', centerTx);
+		
+		arcs.selectAll('path')
+				.data(tickData)
+			.enter().append('path')
+				.attr('fill', function(d, i) {
+					return config.arcColorFn(d * i);
+				})
+				.attr('d', arc);
+		
+		var lg = svg.append('g')
+				.attr('class', 'label')
+				.attr('transform', centerTx);
+		lg.selectAll('text')
+				.data(ticks)
+			.enter().append('text')
+				.attr('transform', function(d) {
+					var ratio = scale(d);
+					var newAngle = config.minAngle + (ratio * range);
+					return 'rotate(' +newAngle +') translate(0,' +(config.labelInset - r) +')';
+				})
+				.text(config.labelFormat);
+
+		var lineData = [ [config.pointerWidth / 2, 0], 
+						[0, -pointerHeadLength],
+						[-(config.pointerWidth / 2), 0],
+						[0, config.pointerTailLength],
+						[config.pointerWidth / 2, 0] ];
+		var pointerLine = d3.line().curve(d3.curveLinear)
+		var pg = svg.append('g').data([lineData])
+				.attr('class', 'pointer')
+				.attr('transform', centerTx);
+				
+		pointer = pg.append('path')
+			.attr('d', pointerLine/*function(d) { return pointerLine(d) +'Z';}*/ )
+			.attr('transform', 'rotate(' +config.minAngle +')');
+			
+		update(newValue === undefined ? 0 : newValue);
+	}
+	that.render = render;
+	function update(newValue, newConfiguration) {
+		if ( newConfiguration  !== undefined) {
+			configure(newConfiguration);
+		}
+		var ratio = scale(newValue);
+		var newAngle = config.minAngle + (ratio * range);
+		pointer.transition()
+			.duration(config.transitionMs)
+			.ease(d3.easeElastic)
+			.attr('transform', 'rotate(' +newAngle +')');
+	}
+	that.update = update;
+
+	configure(configuration);
+	
+	return that;
+};
+</script>
+
+<script>
+function onDocumentReady() {
+	var powerGauge = gauge('#power-gauge', {
+		size: 300,
+		clipWidth: 300,
+		clipHeight: 300,
+		ringWidth: 60,
+		maxValue: 100,
+		transitionMs: 4000,
+	});
+	powerGauge.render();
+	
+	function updateReadings() {
+			fetch("update")
+			.then(res => res.json())
+			.then((out) => {
+			 console.log('Checkout this JSON! ', out);
+			 powerGauge.update(out["sum"]);
+
+			})
+			.catch(err => { throw err });
+	
+	}
+	
+	// every few seconds update reading values
+	updateReadings();
+	setInterval(function() {
+		updateReadings();
+	}, 5 * 1000);
+}
+
+if ( !window.isLoaded ) {
+	window.addEventListener("load", function() {
+		onDocumentReady();
+	}, false);
+} else {
+	onDocumentReady();
+}
+</script>
 </html>

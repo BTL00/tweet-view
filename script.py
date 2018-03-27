@@ -8,8 +8,7 @@ from datetime import datetime
 from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
 import SocketServer
 from threading import Thread
-import magic
-
+import mimetypes
 
 class CsvParser():
 	def parseFile(self, vf):
@@ -97,10 +96,11 @@ class TemplateInflater():
 
 class S(BaseHTTPRequestHandler):
 
-
-	def _set_headers_for(self, t, r = 200):
+	def _set_headers_for(self, t, r = 200, mtype = False):
 		self.send_response(r)
-		if(t.upper() == "JSON"):
+		if(t == False and mtype != False):
+			self.send_header('Content-type', mtype)
+		elif(t.upper() == "JSON"):
 			self.send_header('Content-type', 'application/json')
 		elif(t.upper() == "HTML"):
 			self.send_header('Content-type', 'text/html')
@@ -108,17 +108,20 @@ class S(BaseHTTPRequestHandler):
 
 	def do_GET(self):
 		if(self.path == "/"):
+			global slashCounter
+			slashCounter = slashCounter + 1
 			self._set_headers_for("html")
 			templateInflater.refresh()
 			self.wfile.write(templateInflater.getInflatedTemplate())
 		elif(self.path == "/update"):
 			self._set_headers_for("json")
-			self.wfile.write("")
+			self.wfile.write("{\"sum\" : %d }" % lastSum)
 		else:
 			try:
 				f = open("."+self.path, "r")
-				mime = magic.Magic(mime=True)
-				self._set_headers_for(mime.from_file("."+self.path))
+				mt = mimetypes.guess_type("."+self.path)[0]
+				print mt
+				self._set_headers_for(False, mtype = mt)
 				self.wfile.write(f.read())
 			except IOError:
 				self._set_headers_for("text/html", 404)
@@ -176,6 +179,8 @@ class SeparateClassTests(unittest.TestCase):
 		t = TweetParser(scr.getTweets("bitcoin"), cps.parseFile("testdata.csv"))
 		res = t.assertValueToTweets()
 		d = CsvDataSaver("testoutput.csv")
+		global lastSum 
+		lastSum = sum(res)
 		d.saveData(sum(res))
 		self.assertIsInstance(res, list)
 
@@ -195,6 +200,8 @@ class APITest(unittest.TestCase):
 	def testGETRequestOnSlash(self):
 		testport = 8090
 		global templateInflater
+		global lastSum
+		lastSum = 5
 		templateInflater = TemplateInflater("template.html")
 		templateInflater.inflate({"{toBeReplaced}" : "forThat", "{somethingDifferent}" : "8"})
 		templateInflater.refresh()
@@ -209,10 +216,14 @@ class APITest(unittest.TestCase):
 
 		self.assertEqual(templateInflater.inflatedTemplate ,responseText)
 	def testGETRequestOnUpdate(self):
+		print "PAS?"
 		pass
 	# Basic Template: read file -> format with parameters -> output !!! done <3
 	#  GET request: on "/" -> put data into template -> output
 	#  GET request: on "/update" -> respond with JSON with new data 
+
+
+
 
 
 ###########################################################################
@@ -223,14 +234,30 @@ class APITest(unittest.TestCase):
 
 
 if __name__ == '__main__':
-	unittest.main()
+	#unittest.main()
+	global templateInflater
+	global lastSum
+	lastSum = 5
+	testport = 8091
+	global slashCounter
+	slashCounter = 0
+	templateInflater = TemplateInflater("template.html")
 
-	# run(templateInflater, port=8083)
-	# while(True):
-	# 	if(time.time() % 5 == 0):
-	# 		scr = TweetScraper()
-	# 		cps = CsvParser()
-	# 		t = TweetParser(scr.getTweets("bitcoin"), cps.parseFile("data.csv"))
-	# 		res = t.assertValueToTweets()
-	# 		d = CsvDataSaver("output.csv")
-	# 		d.saveData(sum(res))
+	dateStart = datetime.now().date()
+
+
+	templateInflater.inflate({"{toBeReplaced}" : str(slashCounter)  ,"{totalCommits}" : "4" , "{totalContributors}" : "1" ,"{dateStart}" : str(dateStart)})
+	templateInflater.refresh()
+	serverThread = Thread(target = runServer, args = (testport, ))
+	serverThread.start()
+	while(True):
+		if(time.time() % 5 == 0):
+			scr = TweetScraper()
+			cps = CsvParser()
+			t = TweetParser(scr.getTweets("bitcoin"), cps.parseFile("data.csv"))
+			res = t.assertValueToTweets()
+			d = CsvDataSaver("output.csv")
+			lastSum = sum(res)
+			d.saveData(sum(res))
+		if(time.time() % 10 == 0):
+			templateInflater.refresh()
