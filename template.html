@@ -1,17 +1,20 @@
 <!doctype html>
-<html>
+<html lang="en">
 <head>
-	<title>{toBeReplaced}</title>
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-<script src="https://d3js.org/d3.v4.min.js"></script>
-<script type="text/javascript" src="gauge.js"></script>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta http-equiv="content-type" content="text/html;charset=utf-8">
-	<style>
+			<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
+
+	<title>Tweet view</title>
+			<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+		<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+
+		<script src="https://d3js.org/d3.v4.min.js"></script>
+		<script type="text/javascript" src="gauge.js"></script>
+		<link rel="icon" href="favicon.png" type="image/png" />
+	<style>
+	body {
+		overflow-x: hidden;
+	}
 	#power-gauge g.arc {
 		fill: steelblue;
 	}
@@ -27,72 +30,94 @@
 		font-weight: bold;
 		fill: #666;
 	}
+	.line {
+		  fill: none;
+		  stroke: steelblue;
+		  stroke-width: 2px;
+	}
+
 	</style>
 
 </head>
 <body>
-	<nav class="navbar navbar-light bg-light">
-		<a class="navbar-brand" href="#">
-		<img src="/assets/brand/bootstrap-solid.svg" width="30" height="30" class="d-inline-block align-top" alt="">
-    Bootstrap
-  		</a>
-	</nav>
-	<main class="containter">
+	<header>
+			<nav class="navbar navbar-light bg-light">
+				<a class="navbar-brand" href="#">
+				<img src="favicon.png" width="30" height="30" class="d-inline-block align-top" alt="">
+		    Tweet view
+		  		</a>
+			</nav>
+	</header>
+	<main role="main" class="containter px-2">
+
 	<div class="row">
-		<div class="col-md-3 mx-auto">
+		<div class="col-md-4 mx-auto">
 				<div class="card">
 					<div class="card-header">
-		    			{toBeReplaced}
+						Requests handled
 		  				</div>
 		  		<div class="card-body">
-		    		<h5 class="card-title">{somethingDifferent}</h5>
-		    		<p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-		    		<a href="#" class="btn btn-primary">Go somewhere</a>
+		    		<h5 class="card-title">{requestsHandled}</h5>
+		    		<p class="card-text">This is amount of loads of our page since restart on {dateStart}</p>
 		  		</div>
 				</div>
+				<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+				<!-- tweet-view-1  (display: block)-->
+				<ins class="adsbygoogle"
+				     style="display:none"
+				     data-ad-client="ca-pub-6718957778431178"
+				     data-ad-slot="4509053161"
+				     data-ad-format="auto"></ins>
+				<script>
+				(adsbygoogle = window.adsbygoogle || []).push({});
+				</script> 
 		</div>
-				<div class="col-md-3 mx-auto ">
-				<div class="card bg-light">
+		<div class="col-md-4 mx-auto ">
+					<div class="card bg-light">
 					<div class="card-header">
 		    			GitHub Contributors
-		  				</div>
-		  		<div class="card-body">
-		    		<h5 class="card-title">{totalCommits}</h5>
-		    		<p class="card-text">Total commits</p>
-		    		<h5 class="card-title">{totalContributors}</h5>
-		    		<p class="card-text">Total contributors</p>
-
-		    		<a href="https://github.com/BTL00/tweet-view" class="btn btn-primary">Repo</a>
-		  		</div>
-				</div>
+		  			</div>
+		  			<div class="card-body">
+		    			<h5 class="card-title">{totalCommits}</h5>
+		    			<p class="card-text">Total commits</p>
+		    			<h5 class="card-title">{totalContributors}</h5>
+		    			<p class="card-text">Total contributors</p>
+						<a href="https://github.com/BTL00/tweet-view" class="btn btn-primary">Repo</a>
+		  			</div>
+					</div>
 		</div>
-		<div class="col-md-3 mx-auto">
+		<div class="col-md-4 mx-auto">
 				<div class="card">
 					<div class="card-header bg-info">
-		    			<img src="ptw.png" class="img-fluid" />
+		    			Donate
 		  				</div>
-		  		<div class="card-body">
-		    		<h5 class="card-title">Donate</h5>
-		    		<p class="card-text">Support me as a natural lead-in to updates and new content.</p>
-		    		<a href="https://www.patreon.com/bombapiotr" class="btn btn-primary">Do it now!</a>
+		  		<div class="card-body mx-auto">
+					<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
+					<input type="hidden" name="cmd" value="_s-xclick">
+					<input type="hidden" name="hosted_button_id" value="PTYJA8X6ZRDB8">
+					<input type="image" src="https://www.paypalobjects.com/en_US/PL/i/btn/btn_donateCC_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
+					<img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
+					</form>
 		  		</div>
 				</div>
 		</div>
-				<div class="col-md-12 mx-auto">
+		<div class="col-md-12 mx-auto">
 				<div class="card">
 					<div class="card-header">
 		    			Data
-		  				</div>
-		  		<div class="card-body">
-					<div id="power-gauge"></div>
+		  			</div>
+		  		<div class="card-body mx-auto">
+		  			<div class="row">
+					<div class="col-sm-3" id="power-gauge"></div>
+					<div class="col-sm-6" id="graph"></div>
+				   </div>
 		  		</div>
 				</div>
 		</div>
 	</div>
 	</main>
 
-</body>
-
+<footer>
 <script>
 var gauge = function(container, configuration) {
 	var that = {};
@@ -295,4 +320,73 @@ if ( !window.isLoaded ) {
 	onDocumentReady();
 }
 </script>
+<script>
+
+// set the dimensions and margins of the graph
+var margin = {top: 20, right: 20, bottom: 30, left: 50},
+    width = 960 - margin.left - margin.right,
+    height = 500 - margin.top - margin.bottom;
+
+// parse the date / time
+var parseTime = d3.timeParse("%Y-%m-%d %H:%M:%S");
+
+// set the ranges
+var x = d3.scaleTime().range([0, width]);
+var y = d3.scaleLinear().range([height, 0]);
+
+// define the line
+var valueline = d3.line()
+    .x(function(d) { return x(d.date); })
+    .y(function(d) { return y(d.close); });
+
+// append the svg obgect to the body of the page
+// appends a 'group' element to 'svg'
+// moves the 'group' element to the top left margin
+var svg = d3.select("#graph").append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+  .append("g")
+    .attr("transform",
+          "translate(" + margin.left + "," + margin.top + ")");
+
+// Get the data
+d3.csv("output.csv", function(error, data) {
+	console.log(data)
+  if (error) throw error;
+
+  // format the data
+  data.forEach(function(d) {
+      d.date = parseTime(d.date);
+      d.close = +d.close;
+  });
+
+  // Scale the range of the data
+  x.domain(d3.extent(data, function(d) { return d.date; }));
+  y.domain([0, d3.max(data, function(d) { return d.close; })]);
+
+  // Add the valueline path.
+  svg.append("path")
+      .data([data])
+      .attr("class", "line")
+      .attr("d", valueline);
+
+  // Add the X Axis
+  svg.append("g")
+      .attr("transform", "translate(0," + height + ")")
+      .call(d3.axisBottom(x));
+
+  // Add the Y Axis
+  svg.append("g")
+      .call(d3.axisLeft(y));
+
+});
+
+</script>
+</footer>
+
+
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+</body>
+
 </html>

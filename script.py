@@ -56,7 +56,6 @@ class TweetScraper():
 		texts = r.json()["statuses"]
 		for t in texts:
 			result.append( t["text"].lower() )
-		print result
 		return result
 
 class CsvDataSaver():	
@@ -65,9 +64,9 @@ class CsvDataSaver():
 
 	def saveData(self, data):
 		with open(self.vf, 'a') as csvfile:
-			writer = csv.writer(csvfile, delimiter=' ',
-                            quotechar='|', quoting=csv.QUOTE_MINIMAL)
-			dt = datetime.now()
+			writer = csv.writer(csvfile, delimiter=',',
+                            quotechar='', quoting=csv.QUOTE_NONE)
+			dt = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 			writer.writerow([dt, str(data)])
 
 
@@ -76,6 +75,26 @@ class CsvDataSaver():
 ###########################################################################
 ###########################################################################
 
+class GitStatsScraper():
+	def __init__(self):
+		self.path = 'https://api.github.com/repos/BTL00/tweet-view/contributors'
+	def getCommits(self):
+		# r = requests.get(self.path)
+		# print r
+		# # add error code and maybe a try catch
+		# result = []
+		# return r.json()["contributions"]
+		return 5
+		
+	def getContributors(self):
+		return 1
+
+
+
+
+
+
+###########################################################################
 class TemplateInflater():
 	template = ""
 	inflatedTemplate = ""
@@ -88,15 +107,25 @@ class TemplateInflater():
 			self.template = f.read()
 	def inflate(self, argument):
 		inflatedTemplate = self.template
+
+		argument = self.addSpecial(argument)
+		
 		for i, j in argument.items():
 			inflatedTemplate = inflatedTemplate.replace(i, j)
 			self.inflatedTemplate = inflatedTemplate
 		return inflatedTemplate
+	def addSpecial(self, argument):
+		global slashCounter
+		gitStatsScraper = GitStatsScraper()
+		argument['{requestsHandled}'] =  str( slashCounter ) 
+		argument['{dateStart}'] = str(datetime.now()) 
+		argument['{totalCommits}'] = str(gitStatsScraper.getCommits())
+		argument['{totalContributors}'] = str(gitStatsScraper.getContributors())
+		return argument
 	def getInflatedTemplate(self):
 		return self.inflatedTemplate
 
 class S(BaseHTTPRequestHandler):
-
 
 	def _set_headers_for(self, t, r = 200, mtype = False):
 		self.send_response(r)
@@ -110,6 +139,8 @@ class S(BaseHTTPRequestHandler):
 
 	def do_GET(self):
 		if(self.path == "/"):
+			global slashCounter
+			slashCounter = slashCounter + 1
 			self._set_headers_for("html")
 			templateInflater.refresh()
 			self.wfile.write(templateInflater.getInflatedTemplate())
@@ -136,6 +167,8 @@ class S(BaseHTTPRequestHandler):
 		self.wfile.write("{\"response\":\"OK\"}")
         
 def runServer(port=8081, server_class=HTTPServer, handler_class=S):
+	global dateStart
+	dateStart = datetime.now()
 	server_address = ('', port)
 	httpd = server_class(server_address, handler_class)
 	print 'Starting httpd...'
@@ -153,7 +186,7 @@ def runServer(port=8081, server_class=HTTPServer, handler_class=S):
 
 class SeparateClassTests(unittest.TestCase):
 	def setUp(self):
-		self.startTime = time.time()
+		self.startTime 
 	def tearDown(self):
 		t = time.time() - self.startTime
 		print "%s: %.3f" % (self.id(), t)
@@ -162,27 +195,27 @@ class SeparateClassTests(unittest.TestCase):
 	test_dictionary = {"fall": -5, "rise": 5} # 5 -15
 
 
-	def testTweetParser(self):
-		t = TweetParser(self.test_tweets, self.test_dictionary)
-		self.assertEqual(t.assertValueToTweets() , [5,-15])
+	# def testTweetParser(self):
+	# 	t = TweetParser(self.test_tweets, self.test_dictionary)
+	# 	self.assertEqual(t.assertValueToTweets() , [5,-15])
 
-	def testTweetScraper(self):
-		t = TweetScraper()
-		self.assertIsInstance(t.getTweets("bitcoin") , list)
+	# def testTweetScraper(self):
+	# 	t = TweetScraper()
+	# 	self.assertIsInstance(t.getTweets("bitcoin") , list)
 
-	def testCsvParser(self):
-		csvParser = CsvParser();
-		self.assertIsInstance(csvParser.parseFile("data.csv") , dict)
-	def testWholeApp(self):
-		scr = TweetScraper()
-		cps = CsvParser()
-		t = TweetParser(scr.getTweets("bitcoin"), cps.parseFile("testdata.csv"))
-		res = t.assertValueToTweets()
-		d = CsvDataSaver("testoutput.csv")
-		global lastSum 
-		lastSum = sum(res)
-		d.saveData(sum(res))
-		self.assertIsInstance(res, list)
+	# def testCsvParser(self):
+	# 	csvParser = CsvParser();
+	# 	self.assertIsInstance(csvParser.parseFile("data.csv") , dict)
+	# def testWholeApp(self):
+	# 	scr = TweetScraper()
+	# 	cps = CsvParser()
+	# 	t = TweetParser(scr.getTweets("bitcoin"), cps.parseFile("testdata.csv"))
+	# 	res = t.assertValueToTweets()
+	# 	d = CsvDataSaver("testoutput.csv")
+	# 	global lastSum 
+	# 	lastSum = sum(res)
+	# 	d.saveData(sum(res))
+	# 	self.assertIsInstance(res, list)
 
 
 class APITest(unittest.TestCase):
@@ -191,33 +224,37 @@ class APITest(unittest.TestCase):
 	def tearDown(self):
 		t = time.time() - self.startTime
 		print "%s: %.3f" % (self.id(), t)
-	def testTemplateInflater(self):
-		templateInflater = TemplateInflater("template.html")
-		data = templateInflater.inflate({"{toBeReplaced}" : "forThat", "{somethingDifferent}" : "8"})
-		print data
-		self.assertGreater(len(data), 5)
-		pass
-	def testGETRequestOnSlash(self):
-		testport = 8090
-		global templateInflater
-		global lastSum
-		lastSum = 5
-		templateInflater = TemplateInflater("template.html")
-		templateInflater.inflate({"{toBeReplaced}" : "forThat", "{somethingDifferent}" : "8"})
-		templateInflater.refresh()
-		serverThread = Thread(target = runServer, args = (testport, ))
-		serverThread.start()
-		try:
-			time.sleep(1)
-			response = requests.get("http://localhost:%d/" % testport)
-			responseText = response.text
-		except:
-			responseText = "FAIL!"
+	# def testTemplateInflater(self):
+	# 	templateInflater = TemplateInflater("template.html")
+	# 	data = templateInflater.inflate({"{toBeReplaced}" : "forThat", "{somethingDifferent}" : "8"})
+	# 	print data
+	# 	self.assertGreater(len(data), 5)
+	# 	pass
+	# def testGETRequestOnSlash(self):
+	# 	testport = 8090
+	# 	global templateInflater
+	# 	global lastSum
+	# 	lastSum = 5
+	# 	templateInflater = TemplateInflater("template.html")
+	# 	templateInflater.inflate({"{toBeReplaced}" : "forThat", "{somethingDifferent}" : "8"})
+	# 	templateInflater.refresh()
+	# 	serverThread = Thread(target = runServer, args = (testport, ))
+	# 	serverThread.start()
+	# 	try:
+	# 		time.sleep(1)
+	# 		response = requests.get("http://localhost:%d/" % testport)
+	# 		responseText = response.text
+	# 	except:
+	# 		responseText = "FAIL!"
 
-		self.assertEqual(templateInflater.inflatedTemplate ,responseText)
-	def testGETRequestOnUpdate(self):
-		print "PAS?"
-		pass
+	# 	self.assertEqual(templateInflater.inflatedTemplate ,responseText)
+	# def testGETRequestOnUpdate(self):
+	# 	print "PAS?"
+	# 	pass
+	def testGitHubApi(self):
+		gitStatsScraper = GitStatsScraper()
+		r = gitStatsScraper.getCommits()
+		self.assertIsInstance(r, str)
 	# Basic Template: read file -> format with parameters -> output !!! done <3
 	#  GET request: on "/" -> put data into template -> output
 	#  GET request: on "/update" -> respond with JSON with new data 
@@ -234,17 +271,19 @@ class APITest(unittest.TestCase):
 
 
 if __name__ == '__main__':
-	#unittest.main()
+	# unittest.main()
 	global templateInflater
 	global lastSum
 	lastSum = 5
-	testport = 8090
+	testport = 8092
+	global slashCounter
+	slashCounter = 0
 	templateInflater = TemplateInflater("template.html")
 
+	dateStart = datetime.now().date()
 
 
-
-	templateInflater.inflate({"{toBeReplaced}" : "forThat"  ,"{totalCommits}" : "4" , "{totalContributors}" : "1" ,"{somethingDifferent}" : "8"})
+	templateInflater.inflate({"{toBeReplaced}" : str(slashCounter)  ,"{totalCommits}" : "4" , "{totalContributors}" : "1" ,"{dateStart}" : str(dateStart)})
 	templateInflater.refresh()
 	serverThread = Thread(target = runServer, args = (testport, ))
 	serverThread.start()
@@ -258,4 +297,4 @@ if __name__ == '__main__':
 			lastSum = sum(res)
 			d.saveData(sum(res))
 		if(time.time() % 10 == 0):
-			inflater.refresh()
+			templateInflater.refresh()
