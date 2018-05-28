@@ -1,100 +1,234 @@
 <!doctype html>
-<html>
+<html lang="en">
 <head>
-	<title>{toBeReplaced}</title>
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-<script src="https://d3js.org/d3.v4.min.js"></script>
-<script type="text/javascript" src="gauge.js"></script>
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta http-equiv="content-type" content="text/html;charset=utf-8">
-	<style>
+			<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
+
+	<title>Tweet mood analyzer - #{keyword} @ twitter.com </title>
+			<link rel="stylesheet" href="https://bootswatch.com/4/superhero/bootstrap.min.css" >
+		<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+
+		<script src="https://d3js.org/d3.v4.min.js"></script>
+		<script type="text/javascript" src="gauge.js"></script>
+		<link rel="icon" href="favicon.png" type="image/png" />
+	<style>
+	body {
+		overflow-x: hidden;
+	}
 	#power-gauge g.arc {
 		fill: steelblue;
 	}
 
 	#power-gauge g.pointer {
-		fill: #e85116;
-		stroke: #b64011;
+		fill: #9C7FE8;
+		stroke: #AC7FE8;
 	}
 	
-	#power-gauge g.label text {
+		#power-gauge g.pointer {
+		fill: #9C7FE8;
+		stroke: #AC7FE8;
+	}
+
+	 g.label text {
 		text-anchor: middle;
 		font-size: 14px;
 		font-weight: bold;
-		fill: #666;
+		fill: #ddd;
+	}
+	.line {
+		  fill: none;
+		  stroke: #6BC9FF;
+		  stroke: linear-gradient(to right,  #6BC9FF 0%, #7097FF 100%); /* experimental, doesn't work */
+		  stroke-width: 2px;
+	}
+	.lined {
+		  fill: none;
+		  stroke: #7097FF ;
+		  opacity: 0.2;
+		  stroke: linear-gradient(to right,  #6BC9FF 0%, #7097FF 100%); /* experimental, doesn't work */
+		  stroke-width: 2px;
+	}
+
+	main {
+		margin-top: 20px;
 	}
 	</style>
 
 </head>
 <body>
-	
-	<nav class="navbar navbar-light bg-light">
-		<a class="navbar-brand" href="#">
-		<img src="/assets/brand/bootstrap-solid.svg" width="30" height="30" class="d-inline-block align-top" alt="">
-    Tweet view
-  		</a>
-	</nav>
-	
-	<div class="containter">
+	<header>
+			<nav class="navbar navbar-light bg-light">
+				<a class="navbar-brand" href="#">
+				<img src="favicon.png" width="30" height="30" class="d-inline-block align-top" alt="">
+		    Tweet mood analyzer - #{keyword} @ twitter.com 
+		  		</a>
+			</nav>
+	</header>
+	<main role="main" class="containter px-4">
 
 	<div class="row">
-		<div class="col-md-4 mx-auto">
-				<div class="card">
-					<div class="card-header">
-						Requests handled
-		  				</div>
-		  		<div class="card-body">
-		    		<h5 class="card-title">{toBeReplaced}</h5>
-		    		<p class="card-text">This is amount of loads of our page since restart on {dateStart}</p>
-		  		</div>
-				</div>
+
+		<div class="col-md-4 mx-auto ">
+					<div class="card bg-light border-primary">
+					<div class="card-header bg-dark">
+		    			Settings
+		  			</div>
+		  			<div class="card-body">
+		    		
+		    		<form method="POST">
+		<!--				  <div class="form-group row">
+						    <label for="email" class="col-4 col-form-label">Your email</label> 
+						    <div class="col-8">
+						      <div class="input-group">
+						        <div class="input-group-addon">
+						          <i class="fa fa-address-card"></i>
+						        </div> 
+						        <input id="email" name="email" type="text" class="form-control here">
+						      </div>
+						    </div>
+						  </div> -->
+						  <div class="form-group row">
+						    <label for="select" class="col-4 col-form-label">Dictionary</label> 
+						    <div class="col-8">
+						      <select id=" " name="database" class="custom-select" required="required">
+						        <option value="data.csv">data.csv</option>
+						        <option value="money.csv">money.csv</option>
+						        <option value="social.csv">social.csv</option>
+						      </select>
+						    </div>
+						  </div>
+						  <div class="form-group row">
+						    <label for="select1" class="col-4 col-form-label">Classifier</label> 
+						    <div class="col-8">
+						      <select id="classifier" name="classifier" class="custom-select" required="required">
+						        <option value="mlpc" {mlpSelected}>MLP (Neural net)</option>
+						        <option value="tree" {treeSelected}>Decision tree</option>
+						      </select>
+						    </div>
+						  </div>
+						  <div class="form-group row">
+						    <label for="keyword" class="col-4 col-form-label">Keyword</label> 
+						    <div class="col-8">
+						    	<select id="keyword"  name="keyword" class="custom-select" required="required">
+						        <option value="bitcoin" {bitcoinSelected}>bitcoin</option>
+						        <option value="monero" {moneroSelected}>monero</option>
+						        <option value="music" {musicSelected}>music</option>
+						      </select>
+						    </div>
+						  </div> 
+						  <div class="form-group row">
+						    <div class="offset-4 col-8">
+						      <button name="submit" type="submit" class="btn btn-primary">Submit</button>
+						    </div>
+						  </div>
+						</form>
+
+
+		  			</div>
+					</div>
 		</div>
-				<div class="col-md-4 mx-auto ">
-				<div class="card bg-light">
+				<div class="col-md-4 mx-auto">
+<div class="row">
+			<div class="col-md-12 mx-auto ">
+					<div class="card">
 					<div class="card-header">
 		    			GitHub Contributors
-		  				</div>
-		  		<div class="card-body">
-		    		<h5 class="card-title">{totalCommits}</h5>
-		    		<p class="card-text">Total commits</p>
-		    		<h5 class="card-title">{totalContributors}</h5>
-		    		<p class="card-text">Total contributors</p>
-
-		    		<a href="https://github.com/BTL00/tweet-view" class="btn btn-primary">Repo</a>
-		  		</div>
-				</div>
+		  			</div>
+		  			<div class="card-body">
+		    			<h5 class="card-title">{totalCommits}</h5>
+		    			<p class="card-text">Total commits</p>
+		    			<h5 class="card-title">{totalContributors}</h5>
+		    			<p class="card-text">Total contributors</p>
+						<a href="https://github.com/BTL00/tweet-view" class="btn btn-primary">Repo</a>
+		  			</div>
+					</div>
 		</div>
+
+									<div class="col-md-12 mx-auto pt-4">
+									</div>
+
+
+<div class="col-md-12 mx-auto">
+
+					<div class="card">
+									<div class="card-header ">
+										API 
+						  				</div>
+						  		<div class="card-body">
+						  			
+						  				Output: <a href='output.csv'>./output.csv</a><br />
+						  				Dictionary: <a href='data.csv'>./data.csv</a><br />
+						  				Live updates: <a href='/update'>./update</a><br />
+
+						  				</div>
+						  			</div>
+
+						  		</div>
+</div>
+				</div>
 		<div class="col-md-4 mx-auto">
+			<div class="row">
+							<div class="col-md-12 mx-auto">
+								<div class="card">
+									<div class="card-header">
+										Requests handled
+						  				</div>
+						  		<div class="card-body">
+						    		<h5 class="card-title">Home: {requestsHandledHome} API: {requestsHandledAPI}</h5>
+						    		<p class="card-text">This is amount of loads of our page since restart on <br> <b>{dateStart}</b></p>
+						  		</div>
+
+								</div>
+					
+						</div>
+									<div class="col-md-12 mx-auto pt-4">
+									</div>
+			<div class="col-md-12 mx-auto ">
+
 				<div class="card">
 					<div class="card-header bg-info">
 		    			Donate
 		  				</div>
-		  		<div class="card-body">
-		    		<img src="ptw.png" class="img-fluid" />
-		    		<p class="card-text">Support me as a natural lead-in to updates and new content.</p>
-		    		<a href="https://www.patreon.com/bombapiotr" class="btn btn-primary">Do it now!</a>
+		  		<div class="card-body mx-auto">
+		  			<p>Consider donating some cash for hosting and domain assignment </p>
+					<form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
+					<input type="hidden" name="cmd" value="_s-xclick">
+					<input type="hidden" name="hosted_button_id" value="PTYJA8X6ZRDB8">
+					<input type="image" src="https://www.paypalobjects.com/en_US/PL/i/btn/btn_donateCC_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
+					<img alt="" border="0" src="https://www.paypalobjects.com/en_US/i/scr/pixel.gif" width="1" height="1">
+					</form>
 		  		</div>
 				</div>
+			</div>
+			</div>
 		</div>
-				<div class="col-md-12 mx-auto">
+		<div class="col-md-10 mx-auto pt-4 mb-4">
 				<div class="card">
 					<div class="card-header">
 		    			Data
-		  				</div>
-		  		<div class="card-body">
-					<div id="power-gauge"></div>
+		  			</div>
+		  		<div class="card-body mx-auto">
+		  			<div class="row">
+		  				<div class="col-sm-4">
+		  				<div class="row">
+							<p>Live:</p>
+							<div class="col-sm-12" id="power-gauge"></div>
+
+												</div>
+		  				<div class="row">
+		  					<p>Prediction:</p>
+							<div class="col-sm-12" id="power-gauge-predict"></div>
+						</div>
+					</div>
+					<div class="col-sm-8" id="graph"></div>
+				   </div>
 		  		</div>
 				</div>
 		</div>
 	</div>
-	</div>
+	</main>
 
-</body>
-
+<footer>
 <script>
 var gauge = function(container, configuration) {
 	var that = {};
@@ -109,11 +243,11 @@ var gauge = function(container, configuration) {
 		pointerTailLength			: 5,
 		pointerHeadLengthPercent	: 0.9,
 		
-		minValue					: 0,
-		maxValue					: 10,
+		minValue					: -100,
+		maxValue					: 100,
 		
-		minAngle					: -90,
-		maxAngle					: 90,
+		minAngle					: -110,
+		maxAngle					: +110,
 		
 		transitionMs				: 750,
 		
@@ -121,7 +255,7 @@ var gauge = function(container, configuration) {
 		labelFormat					: d3.format('d'),
 		labelInset					: 10,
 		
-		arcColorFn					: d3.interpolateHsl(d3.rgb('#e8e2ca'), d3.rgb('#3e6c0a'))
+		arcColorFn					: d3.interpolateHsl(d3.rgb('#6BC9FF'), d3.rgb('#7097FF'))
 	};
 	var range = undefined;
 	var r = undefined;
@@ -269,17 +403,41 @@ function onDocumentReady() {
 		transitionMs: 4000,
 	});
 	powerGauge.render();
-	
+		var powerGaugePredict = gauge('#power-gauge-predict', {
+		size: 300,
+		clipWidth: 300,
+		clipHeight: 300,
+		ringWidth: 60,
+		maxValue: 100,
+		transitionMs: 4000,
+	});
+	powerGaugePredict.render();
 	function updateReadings() {
 			fetch("update")
 			.then(res => res.json())
 			.then((out) => {
-			 console.log('Checkout this JSON! ', out);
-			 powerGauge.update(out["sum"]);
+			 console.log('Check out this JSON! ', out);
+			 o = out["sum"];
+			 if (o > 100) { o = 100 ;}
+			 if (o < -100) { o = -100 ;}
+
+			 powerGauge.update(o);
 
 			})
 			.catch(err => { throw err });
 	
+			fetch("predict")
+			.then(res => res.json())
+			.then((out) => {
+			 console.log('Check out this JSON! ', out);
+			 			 o = out["predict"];
+			 if (o > 100) { o = 100 ;}
+			 if (o < -100) { o = -100 ;}
+			 	powerGaugePredict.update(o);
+
+			})
+			.catch(err => { throw err });
+
 	}
 	
 	// every few seconds update reading values
@@ -297,4 +455,85 @@ if ( !window.isLoaded ) {
 	onDocumentReady();
 }
 </script>
+<script>
+
+// set the dimensions and margins of the graph
+var margin = {top: 20, right: 20, bottom: 30, left: 50},
+    width = 720 - margin.left - margin.right,
+    height = 500 - margin.top - margin.bottom;
+
+// parse the date / time
+var parseTime = d3.timeParse("%Y-%m-%d %H:%M:%S");
+
+// set the ranges
+var x = d3.scaleTime().range([0, width]);
+var y = d3.scaleLinear().range([height, 0]);
+
+// define the line
+var valueline = d3.line()
+    .x(function(d) { return x(d.date); })
+    .y(function(d) { return y(d.close); });
+
+var dvalueline = d3.line()
+	.curve(d3.curveBasis)
+    .x(function(d) { return x(d.date); })
+    .y(function(d) { return y(d.close); });
+
+// append the svg obgect to the body of the page
+// appends a 'group' element to 'svg'
+// moves the 'group' element to the top left margin
+var svg = d3.select("#graph").append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+  .append("g")
+    .attr("transform",
+          "translate(" + margin.left + "," + margin.top + ")");
+
+// Get the data
+d3.csv("{keyword}.csv", function(error, data) {
+	console.log(data)
+  if (error) throw error;
+
+  // format the data
+  data.forEach(function(d) {
+      d.date = parseTime(d.date);
+      d.close = +d.close;
+  });
+
+  // Scale the range of the data
+  x.domain(d3.extent(data, function(d) { return d.date; }));
+  y.domain([d3.min(data, function(d) { return d.close; }), d3.max(data, function(d) { return d.close; })]);
+
+  // Add the valueline path.
+    svg.append("path")
+      .data([data])
+      .attr("class", "line")
+      .attr("d", dvalueline);
+
+  svg.append("path")
+      .data([data])
+      .attr("class", "lined")
+      .attr("d", valueline);
+
+
+
+  // Add the X Axis
+  svg.append("g")
+      .attr("transform", "translate(0," + height + ")")
+      .call(d3.axisBottom(x));
+
+  // Add the Y Axis
+  svg.append("g")
+      .call(d3.axisLeft(y));
+
+});
+
+</script>
+</footer>
+
+
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+</body>
+
 </html>
